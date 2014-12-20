@@ -5,14 +5,17 @@
         var slice = Array.prototype.slice;
         slice.call(arguments, 1).forEach(function (source) {
             for (key in source)
-                if (source[key] !== undefined)
-                    target[key] = source[key]
+                if (source[key] !== undefined) {
+                    target[key] = source[key];
+                }
         });
         return target;
     };
 
     Tools.prototype.serializeData = function(options) {
-        if (typeof(options.data) === 'object') options.data = this.param(options.data)
+        if (typeof(options.data) === 'object') {
+            options.data = this.param(options.data);
+        }
         if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
             options.url = (options.url + '&' + options.data).replace(/[&?]{1,2}/, '?');
         return options;
@@ -31,11 +34,11 @@
     };
 
     Tools.prototype.param = function(obj, traditional){
-        var params = []
+        var params = [];
         params.add = function(k, v){
             this.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
         };
-        this.serialize(params, obj, traditional)
+        this.serialize(params, obj, traditional);
         return params.join('&').replace('%20', '+')
     };
 
@@ -44,12 +47,14 @@
         for (var key in obj) {
             var value = obj[key];
 
-            if (scope) key = traditional ? scope : scope + '[' + (array ? '' : key) + ']'
-            // handle data in serializeArray() format
-            if (!scope && array) params.add(value.name, value.value)
-            // recurse into nested objects
+            if (scope) {
+                key = traditional ? scope : scope + '[' + (array ? '' : key) + ']';
+            }
+            if (!scope && array) {
+                params.add(value.name, value.value);
+            }
             else if (traditional ? (typeof(value) === 'array') : (typeof(value) === 'object'))
-                this.serialize(params, value, traditional, key)
+                this.serialize(params, value, traditional, key);
             else params.add(key, value)
         }
     }
@@ -69,21 +74,14 @@
 
 
         this.settings = {
-            // Default type of request
             type: 'GET',
-            // Callback that is executed if the request succeeds
             success: function(){},
-            // Callback that is executed the the server drops error
             fail: function(){},
-            // The context for the callbacks
             context: null,
-            // Whether to trigger "global" Ajax events
             global: true,
-            // Transport
             xhr: function () {
                 return new window.XMLHttpRequest()
             },
-            // MIME types mapping
             accepts: {
                 script: 'text/javascript, application/javascript',
                 json:   jsonType,
@@ -91,9 +89,7 @@
                 html:   htmlType,
                 text:   'text/plain'
             },
-            // Whether the request is to another domain
             crossDomain: false,
-            // Default timeout
             timeout: 0
         };
 
@@ -115,15 +111,17 @@
         var dataType = settings.dataType,
             hasPlaceholder = /=\?/.test(settings.url);
 
-        if (!settings.url) settings.url = window.location.toString()
-        settings = t.serializeData(settings)
+        if (!settings.url) {
+            settings.url = window.location.toString();
+        }
+        settings = t.serializeData(settings);
         if(settings.accepts!== undefined) {
             var mime = settings.accepts[dataType];
         }
 
         var baseHeaders = { },
             protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
-            xhr = this.settings.xhr(), abortTimeout
+            xhr = this.settings.xhr(), abortTimeout;
 
         if (!settings.crossDomain) {
             baseHeaders['X-Requested-With'] = 'XMLHttpRequest';
@@ -185,7 +183,6 @@
             settings.fail(null, 'timeout', xhr, settings)
         }, settings.timeout)
 
-        // avoid sending empty string (#319)
         xhr.send(settings.data ? settings.data : null)
         return xhr
     };
