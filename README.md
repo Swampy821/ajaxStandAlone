@@ -25,7 +25,7 @@ Ajax({
 Ajax.post('myURL.html', {"data":"Data"}, function(data) {
    console.log(data);
 });
-
+```
 
 #####get
 ```javascript
